@@ -6,7 +6,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 # Console output at startup
-print("Date Calculator v. 1.1\n2025 © Data Animal")
+print("Date Calculator v. 1.2\n2025 © Data Animal")
 
 # Global variables
 currentDate = datetime.date.today()
@@ -118,37 +118,39 @@ def DA_calculation():
 
 def addition(days, current):
     end_date = current + timedelta(days=days)
-
     rd = relativedelta(end_date, current)
+
     years = rd.years
     months = rd.months
     days_remaining = rd.days
-    if days > 365:
-        if months != 0:
-            DC_outcomeAdd.config(text=f"{years} years, {months} months, {days_remaining} days")
+
+    ystring = "year"
+    mstring = "month"
+    dstring = "day"
+
+    if years > 1:
+        ystring = "years"
+    if months > 1:
+        mstring = "months"
+    if days_remaining > 1:
+        dstring = "days"
+
+    if days >= 365:
+        if months != 0 and days_remaining != 0:
+            DC_outcomeAdd.config(text=f"{years} {ystring}, {months} {mstring}, {days_remaining} {dstring}")
+        elif months == 0 and days_remaining != 0:
+            DC_outcomeAdd.config(text=f"{years} {ystring}, {days_remaining} {dstring}")
+        elif months != 0 and days_remaining == 0:
+            DC_outcomeAdd.config(text=f"{years} {ystring}, {months} {mstring}")
         else:
-            DC_outcomeAdd.config(text=f"{years} years, {days_remaining} days")
-    elif days <= 365 and days >= 31:
-        DC_outcomeAdd.config(text=f"{months} months, {days_remaining} days")
+            DC_outcomeAdd.config(text=f"{years} {ystring}")
+    elif days < 365 and days >= 31:
+        if days != 0:
+            DC_outcomeAdd.config(text=f"{months} {mstring}, {days_remaining} {dstring}")
+        else:
+            DC_outcomeAdd.config(text=f"{months} {mstring}")
     else:
         DC_outcomeAdd.config(text="")
-
-'''
-def addition(days, current):
-    end_date = current + datetime.timedelta(days=days)
-    years = end_date.year - current.year
-    months = ((end_date.month - current.month) + years * 12) -1
-    days_remaining = (end_date - datetime.date(end_date.year, end_date.month, 1)).days +1
-
-    if months <= 0:
-      DC_outcomeAdd.config(text="")
-    elif years == 0:
-        DC_outcomeAdd.config(text=f"{months} months, {days_remaining} days")
-    elif months < 12:
-        DC_outcomeAdd.config(text=f"{years} years, {months} months, {days_remaining} days")
-    else:
-      DC_outcomeAdd.config(text=f"{years} years, {months % 12} months, {days_remaining} days")
-'''
 
 # Window settings
 root = tk.Tk()
