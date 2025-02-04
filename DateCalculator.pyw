@@ -2,10 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 import tempfile, base64, zlib
 import datetime
+from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 # Console output at startup
-print("Date Calculator v. 1.0\n2025 © Data Animal")
+print("Date Calculator v. 1.1\n2025 © Data Animal")
 
 # Global variables
 currentDate = datetime.date.today()
@@ -24,6 +25,7 @@ with open(ICON_PATH, 'wb') as icon_file:
 def handleEvent(event):
     entry = event.widget
     entry.delete(0, 'end')
+    entry.unbind("<FocusIn>")
 
 def today(placement):
     entries = [
@@ -34,10 +36,13 @@ def today(placement):
     day_entry, month_entry, year_entry = entries[placement]
     day_entry.delete(0, "end")
     day_entry.insert(0, day)
+    day_entry.unbind("<FocusIn>")
     month_entry.delete(0, "end")
     month_entry.insert(0, month)
+    month_entry.unbind("<FocusIn>")
     year_entry.delete(0, "end")
     year_entry.insert(0, year)
+    year_entry.unbind("<FocusIn>")
 
 def DC_calculation():
     try:
@@ -112,8 +117,25 @@ def DA_calculation():
         DA_outcome.config(text=f"An unexpected error occurred: {e}")
 
 def addition(days, current):
+    end_date = current + timedelta(days=days)
+
+    rd = relativedelta(end_date, current)
+    years = rd.years
+    months = rd.months
+    days_remaining = rd.days
+    if days > 365:
+        if months != 0:
+            DC_outcomeAdd.config(text=f"{years} years, {months} months, {days_remaining} days")
+        else:
+            DC_outcomeAdd.config(text=f"{years} years, {days_remaining} days")
+    elif days <= 365 and days >= 31:
+        DC_outcomeAdd.config(text=f"{months} months, {days_remaining} days")
+    else:
+        DC_outcomeAdd.config(text="")
+
+'''
+def addition(days, current):
     end_date = current + datetime.timedelta(days=days)
-    print(current)
     years = end_date.year - current.year
     months = ((end_date.month - current.month) + years * 12) -1
     days_remaining = (end_date - datetime.date(end_date.year, end_date.month, 1)).days +1
@@ -126,6 +148,7 @@ def addition(days, current):
         DC_outcomeAdd.config(text=f"{years} years, {months} months, {days_remaining} days")
     else:
       DC_outcomeAdd.config(text=f"{years} years, {months % 12} months, {days_remaining} days")
+'''
 
 # Window settings
 root = tk.Tk()
@@ -191,20 +214,16 @@ DA_StartYearEntry.bind("<FocusIn>", handleEvent)
 DA_operation = ttk.Combobox(tab2, state="readonly", width=14, values=["Add", "Subtract"])
 DA_operation.current(0)
 DA_EndDay = tk.Label(tab2, text="Days")
-DA_EndDayEntry = tk.Entry(tab2, width=3)
-DA_EndDayEntry.insert(0,"dd")
+DA_EndDayEntry = tk.Entry(tab2, width=5)
 DA_EndDayEntry.bind("<FocusIn>", handleEvent)
 DA_EndWeek = tk.Label(tab2, text="Weeks:")
-DA_EndWeekEntry = tk.Entry(tab2, width=3)
-DA_EndWeekEntry.insert(0,"ww")
+DA_EndWeekEntry = tk.Entry(tab2, width=5)
 DA_EndWeekEntry.bind("<FocusIn>", handleEvent)
 DA_EndMonth = tk.Label(tab2, text="Months:")
-DA_EndMonthEntry = tk.Entry(tab2, width=3)
-DA_EndMonthEntry.insert(0,"mm")
+DA_EndMonthEntry = tk.Entry(tab2, width=5)
 DA_EndMonthEntry.bind("<FocusIn>", handleEvent)
 DA_EndYear = tk.Label(tab2, text="Years:")
-DA_EndYearEntry = tk.Entry(tab2, width=4)
-DA_EndYearEntry.insert(0,"yyyy")
+DA_EndYearEntry = tk.Entry(tab2, width=5)
 DA_EndYearEntry.bind("<FocusIn>", handleEvent)
 DA_calculate = tk.Button(tab2, text="Calculate new date", command=DA_calculation)
 DA_outcome = tk.Label(tab2, text="", font=("Arial", 20))
