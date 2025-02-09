@@ -6,7 +6,7 @@ from datetime import timedelta
 from dateutil.relativedelta import relativedelta
 
 # Console output at startup
-print("Date Calculator v. 1.2\n2025 © Data Animal")
+print("Date Calculator v. 1.3\n2025 © Data Animal")
 
 # Global variables
 currentDate = datetime.date.today()
@@ -60,6 +60,10 @@ def DC_calculation():
             DC_StartYearEntry.delete(0, "end")
             DC_StartYearEntry.insert(0, year)
         currentYear = int(DC_StartYearEntry.get())
+        if currentYear < 100:
+            currentYear += 2000
+            DC_StartYearEntry.delete(0, "end")
+            DC_StartYearEntry.insert(0, currentYear)
 
         currentDate = datetime.date(currentYear, currentMonth, currentDay)
 
@@ -77,6 +81,10 @@ def DC_calculation():
             DC_EndYearEntry.delete(0, "end")
             DC_EndYearEntry.insert(0, year)
         yearsToAdd = int(DC_EndYearEntry.get())
+        if yearsToAdd < 100:
+            yearsToAdd += 2000
+            DC_EndYearEntry.delete(0, "end")
+            DC_EndYearEntry.insert(0, yearsToAdd)
 
         destinationDate = datetime.date(yearsToAdd, monthsToAdd, daysToAdd)
         DC_outcome.config(text=f"{(destinationDate - currentDate).days} Days")
@@ -92,6 +100,10 @@ def DA_calculation():
         currentDay = int(DA_StartDayEntry.get()) if DA_StartDayEntry.get() not in ("dd", "") else day
         currentMonth = int(DA_StartMonthEntry.get()) if DA_StartMonthEntry.get() not in ("mm", "") else month
         currentYear = int(DA_StartYearEntry.get()) if DA_StartYearEntry.get() not in ("yyyy", "") else year
+        if currentYear < 100:
+            currentYear += 2000
+            DA_StartYearEntry.delete(0, "end")
+            DA_StartYearEntry.insert(0, currentYear)
         currentDate = datetime.date(currentYear, currentMonth, currentDay)
 
         daysToAdd = int(DA_EndDayEntry.get()) if DA_EndDayEntry.get() not in ("dd", "") else 0
